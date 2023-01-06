@@ -1,0 +1,14 @@
+on: [push]
+
+jobs:
+  run_nscloud_action:
+    runs-on: ubuntu-latest
+    name: Deploy a sample application to Namespace Cloud
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Create Cluster
+        uses: ./ # Uses an action in the root directory
+      - name: Apply configurations
+        run: |
+          kubectl apply -f testdata/kubernetes/demo.yaml
