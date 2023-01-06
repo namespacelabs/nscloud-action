@@ -15,5 +15,6 @@ exports.run = run;
 
 /* istanbul ignore next */
 if (require.main === module) {
+	console.log("test");
 	run();
 }
