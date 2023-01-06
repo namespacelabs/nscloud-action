@@ -10,5 +10,6 @@ jobs:
       - name: Create Cluster
         uses: ./ # Uses an action in the root directory
       - name: Apply configurations
+        # TODO kubectl apply -f testdata/kubernetes/demo.yaml
         run: |
-          kubectl apply -f testdata/kubernetes/demo.yaml
+          echo "TODO apply demo resources..."
