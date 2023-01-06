@@ -8,7 +8,7 @@ async function run() {
 		core.setFailed("Missing required environment value. Are you running in GitHub Actions?");
 	}
 
-	core.notice(`repo: ${GITHUB_REPOSITORY}, author: ${GITHUB_ACTOR}, commit: ${GITHUB_SHA}`);
+	console.log(`repo: ${GITHUB_REPOSITORY}, author: ${GITHUB_ACTOR}, commit: ${GITHUB_SHA}`);
 }
 
 exports.run = run;
