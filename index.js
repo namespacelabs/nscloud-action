@@ -1,20 +1,16 @@
 import * as core from "@actions/core";
+import { assert } from "console";
 
-async function run() {
+try {
 	const isDefined = (i) => !!i;
 
 	const { GITHUB_REPOSITORY, GITHUB_ACTOR, GITHUB_SHA } = process.env;
-	if (![GITHUB_REPOSITORY, GITHUB_ACTOR, GITHUB_SHA].every(isDefined)) {
-		core.setFailed("Missing required environment value. Are you running in GitHub Actions?");
-	}
+	assert(
+		[GITHUB_REPOSITORY, GITHUB_ACTOR, GITHUB_SHA].every(isDefined),
+		"Missing required environment value. Are you running in GitHub Actions?"
+	);
 
 	console.log(`repo: ${GITHUB_REPOSITORY}, author: ${GITHUB_ACTOR}, commit: ${GITHUB_SHA}`);
-}
-
-exports.run = run;
-
-/* istanbul ignore next */
-if (require.main === module) {
-	console.log("test\n");
-	run();
+} catch (error) {
+	core.setFailed(error.message);
 }
