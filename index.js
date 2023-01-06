@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 
 async function run() {
-	const isDefined = (i: any) => !!i;
+	const isDefined = (i) => !!i;
 
 	const { GITHUB_REPOSITORY, GITHUB_ACTOR, GITHUB_SHA } = process.env;
 	if (![GITHUB_REPOSITORY, GITHUB_ACTOR, GITHUB_SHA].every(isDefined)) {
@@ -11,4 +11,9 @@ async function run() {
 	core.notice(`repo: ${GITHUB_REPOSITORY}, author: ${GITHUB_ACTOR}, commit: ${GITHUB_SHA}`);
 }
 
-run();
+exports.run = run;
+
+/* istanbul ignore next */
+if (require.main === module) {
+	run();
+}
