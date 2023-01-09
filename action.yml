@@ -1,5 +1,6 @@
 name: '"Configure Namespace Cloud" Action For GitHub Actions'
 description: "Configure a Namespace Cloud cluster and expose a preconfigured kubectl to access it"
 runs:
-  using: "node16"
-  main: "dist/index.js"
+  using: node16
+  main: dist/main/index.js
+  post: dist/post/index.js

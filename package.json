@@ -4,23 +4,12 @@
 	"description": "",
 	"main": "index.js",
 	"dependencies": {
-		"@actions/core": "^1.10.0",
-		"before-after-hook": "^2.2.3",
-		"deprecation": "^2.3.1",
-		"is-plain-object": "^5.0.0",
-		"node-fetch": "^2.6.7",
-		"once": "^1.4.0",
-		"tr46": "^0.0.3",
-		"tunnel": "^0.0.6",
-		"typescript": "^4.9.4",
-		"universal-user-agent": "^6.0.0",
-		"uuid": "^8.3.2",
-		"webidl-conversions": "^3.0.1",
-		"whatwg-url": "^5.0.0",
-		"wrappy": "^1.0.2"
+		"@actions/core": "^1.10.0"
 	},
 	"scripts": {
-		"package": "ncc build --license licenses.txt"
+		"build": "concurrently 'yarn build:main' 'yarn build:post'",
+		"build:main": "ncc build main.ts --out dist/main",
+		"build:post": "ncc build post.ts --out dist/post"
 	},
 	"repository": {
 		"type": "git",
@@ -28,9 +17,12 @@
 	},
 	"keywords": [],
 	"author": "",
-	"license": "ISC",
-	"bugs": {
-		"url": "https://github.com/namespacelabs/nscloud-action/issues"
-	},
-	"homepage": "https://github.com/namespacelabs/nscloud-action#readme"
+	"license": "Apache-2.0",
+	"devDependencies": {
+		"@types/node": "^16.11.7",
+		"@vercel/ncc": "^0.34.0",
+		"concurrently": "^7.5.0",
+		"prettier": "^2.0.2",
+		"typescript": "^4.8.4"
+	}
 }
