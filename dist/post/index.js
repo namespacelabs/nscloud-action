@@ -33,7 +33,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 };
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log(`post run!`);
+        console.log(`post-run path is ${process.env.PATH}`);
     });
 }
 run();
