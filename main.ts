@@ -24,8 +24,8 @@ async function run(): Promise<void> {
 		child.stdin.write(`${id_token}\n`);
 		child.stdin.end();
 
-		await new Promise((resolve) => {
-			child.on("close", resolve);
+		child.on("exit", function (code, signal) {
+			console.log("child process exited with " + `code ${code} and signal ${signal}`);
 		});
 
 		execSync("ns cluster create --ephemeral=true --output_to=./clusterId.txt", {

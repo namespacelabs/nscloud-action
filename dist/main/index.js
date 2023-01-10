@@ -6758,8 +6758,8 @@ function run() {
             child.stdout.pipe(process.stdout);
             child.stdin.write(`${id_token}\n`);
             child.stdin.end();
-            yield new Promise((resolve) => {
-                child.on("close", resolve);
+            child.on("exit", function (code, signal) {
+                console.log("child process exited with " + `code ${code} and signal ${signal}`);
             });
             (0,external_child_process_.execSync)("ns cluster create --ephemeral=true --output_to=./clusterId.txt", {
                 stdio: "inherit",
