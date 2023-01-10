@@ -25,6 +25,7 @@ async function run(): Promise<void> {
 		core.addPath(pathToCLI);
 
 		execSync("ns version", { stdio: "inherit" });
+		execSync("echo test", { stdio: "inherit" });
 	} catch (error) {
 		core.setFailed(error.message);
 	}
