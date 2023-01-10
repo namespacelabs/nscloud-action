@@ -6755,13 +6755,7 @@ function run() {
             core.addPath(pathToCLI);
             (0,external_child_process_.execSync)("ns version", { stdio: "inherit" });
             let id_token = yield core.getIDToken();
-            let child = (0,external_child_process_.exec)("ns login robot");
-            child.stdout.pipe(process.stdout);
-            child.stdin.write(`${id_token}\n`);
-            child.stdin.end();
-            yield new Promise((resolve) => {
-                child.on("close", resolve);
-            });
+            (0,external_child_process_.execSync)("ns login robot", { stdio: "inherit", input: `${id_token}\n` });
             (0,external_child_process_.execSync)("ns cluster create --ephemeral=true --output_to=./clusterId.txt", {
                 stdio: "inherit",
             });

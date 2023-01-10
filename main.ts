@@ -2,7 +2,7 @@ import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
 import * as common from "./common";
 import * as fs from "fs";
-import { exec, execSync } from "child_process";
+import { execSync } from "child_process";
 
 async function run(): Promise<void> {
 	try {
@@ -21,14 +21,7 @@ async function run(): Promise<void> {
 		execSync("ns version", { stdio: "inherit" });
 
 		let id_token = await core.getIDToken();
-		let child = exec("ns login robot");
-		child.stdout.pipe(process.stdout);
-		child.stdin.write(`${id_token}\n`);
-		child.stdin.end();
-
-		await new Promise((resolve) => {
-			child.on("close", resolve);
-		});
+		execSync("ns login robot", { stdio: "inherit", input: `${id_token}\n` });
 
 		execSync("ns cluster create --ephemeral=true --output_to=./clusterId.txt", {
 			stdio: "inherit",
