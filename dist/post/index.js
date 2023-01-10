@@ -21,7 +21,12 @@
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
+// ESM COMPAT FLAG
 __nccwpck_require__.r(__webpack_exports__);
+
+;// CONCATENATED MODULE: external "child_process"
+const external_child_process_namespaceObject = require("child_process");
+;// CONCATENATED MODULE: ./post.ts
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -31,13 +36,14 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log(`post-run path is ${process.env.PATH}`);
+        (0,external_child_process_namespaceObject.execSync)("ns version", { stdio: "inherit" });
     });
 }
 run();
-
 
 module.exports = __webpack_exports__;
 /******/ })()

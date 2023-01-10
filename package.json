@@ -9,8 +9,11 @@
 	},
 	"scripts": {
 		"build": "concurrently 'yarn build:main' 'yarn build:post'",
+		"watch": "concurrently 'yarn build:main --watch' 'yarn build:post' --watch",
 		"build:main": "ncc build main.ts --out dist/main",
-		"build:post": "ncc build post.ts --out dist/post"
+		"watch:main": "ncc build main.ts --out dist/main --watch",
+		"build:post": "ncc build post.ts --out dist/post",
+		"watch:post": "ncc build post.ts --out dist/post --watch"
 	},
 	"repository": {
 		"type": "git",
@@ -23,7 +26,11 @@
 		"@types/node": "^16.11.7",
 		"@vercel/ncc": "^0.34.0",
 		"concurrently": "^7.5.0",
+		"pre-commit": "^1.2.2",
 		"prettier": "^2.0.2",
 		"typescript": "^4.8.4"
-	}
+	},
+	"pre-commit": [
+		"build"
+	]
 }
