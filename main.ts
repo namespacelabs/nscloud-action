@@ -23,7 +23,7 @@ async function run(): Promise<void> {
 		const id_token = await core.getIDToken();
 		const { GITHUB_REPOSITORY } = process.env;
 
-		execSync(`ns login robot github.com/${GITHUB_REPOSITORY}`, {
+		execSync(`ns login robot github.com/${GITHUB_REPOSITORY} --log_actions`, {
 			stdio: "inherit",
 			input: `${id_token}\n`,
 		});
