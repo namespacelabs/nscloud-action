@@ -24,20 +24,6 @@ async function run(): Promise<void> {
 		// Expose the tool by adding it to the PATH
 		core.addPath(pathToCLI);
 
-		exec("echo hello0", (error, stdout, stderr) => {
-			if (error) {
-				console.error(`exec error: ${error}`);
-				return;
-			}
-			console.log(`stdout: ${stdout}`);
-			console.error(`stderr: ${stderr}`);
-		});
-
-		execSync("echo hello1", { stdio: "pipe" });
-
-		const result = execSync("echo hello2", { stdio: "inherit" });
-		console.log(result.toString("utf8"));
-
 		execSync("ns version", { stdio: "inherit" });
 	} catch (error) {
 		core.setFailed(error.message);

@@ -6775,17 +6775,6 @@ function run() {
             const pathToCLI = yield _actions_tool_cache__WEBPACK_IMPORTED_MODULE_1__.extractTar(pathToTarball);
             // Expose the tool by adding it to the PATH
             _actions_core__WEBPACK_IMPORTED_MODULE_0__.addPath(pathToCLI);
-            (0,child_process__WEBPACK_IMPORTED_MODULE_2__.exec)("echo hello0", (error, stdout, stderr) => {
-                if (error) {
-                    console.error(`exec error: ${error}`);
-                    return;
-                }
-                console.log(`stdout: ${stdout}`);
-                console.error(`stderr: ${stderr}`);
-            });
-            (0,child_process__WEBPACK_IMPORTED_MODULE_2__.execSync)("echo hello1", { stdio: "pipe" });
-            const result = (0,child_process__WEBPACK_IMPORTED_MODULE_2__.execSync)("echo hello2", { stdio: "inherit" });
-            console.log(result.toString("utf8"));
             (0,child_process__WEBPACK_IMPORTED_MODULE_2__.execSync)("ns version", { stdio: "inherit" });
         }
         catch (error) {
