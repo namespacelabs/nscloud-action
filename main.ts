@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
-import { exec } from "child_process";
+import { spawn } from "child_process";
 
 async function run(): Promise<void> {
 	try {
@@ -24,9 +24,7 @@ async function run(): Promise<void> {
 		// Expose the tool by adding it to the PATH
 		core.addPath(pathToCLI);
 
-		exec("echo test");
-
-		exec("ns version");
+		spawn("ns version", { stdio: "inherit" });
 	} catch (error) {
 		core.setFailed(error.message);
 	}
