@@ -6692,35 +6692,6 @@ module.exports = require("util");
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__nccwpck_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__nccwpck_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -6741,13 +6712,21 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
 "use strict";
+// ESM COMPAT FLAG
 __nccwpck_require__.r(__webpack_exports__);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(2186);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _actions_tool_cache__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7784);
-/* harmony import */ var _actions_tool_cache__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_tool_cache__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var child_process__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(2081);
-/* harmony import */ var child_process__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(child_process__WEBPACK_IMPORTED_MODULE_2__);
+
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __nccwpck_require__(2186);
+// EXTERNAL MODULE: ./node_modules/@actions/tool-cache/lib/tool-cache.js
+var tool_cache = __nccwpck_require__(7784);
+;// CONCATENATED MODULE: ./common.ts
+const clusterIdKey = "clusterId";
+
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __nccwpck_require__(7147);
+// EXTERNAL MODULE: external "child_process"
+var external_child_process_ = __nccwpck_require__(2081);
+;// CONCATENATED MODULE: ./main.ts
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -6760,35 +6739,36 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
+
+
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Download the specific version of the tool, e.g. as a tarball
-            const pathToTarball = yield _actions_tool_cache__WEBPACK_IMPORTED_MODULE_1__.downloadTool(getDownloadURL(), null, null, {
+            const pathToTarball = yield tool_cache.downloadTool(getDownloadURL(), null, null, {
                 CI: process.env.CI,
                 "User-Agent": "nscloud-action",
             });
             // Extract the tarball onto the runner
-            const pathToCLI = yield _actions_tool_cache__WEBPACK_IMPORTED_MODULE_1__.extractTar(pathToTarball);
+            const pathToCLI = yield tool_cache.extractTar(pathToTarball);
             // Expose the tool by adding it to the PATH
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.addPath(pathToCLI);
-            (0,child_process__WEBPACK_IMPORTED_MODULE_2__.execSync)("ns version", { stdio: "inherit" });
-            let id_token = yield _actions_core__WEBPACK_IMPORTED_MODULE_0__.getIDToken();
-            let child = (0,child_process__WEBPACK_IMPORTED_MODULE_2__.exec)("ns login robot");
+            core.addPath(pathToCLI);
+            (0,external_child_process_.execSync)("ns version", { stdio: "inherit" });
+            let id_token = yield core.getIDToken();
+            let child = (0,external_child_process_.exec)("ns login robot");
             child.stdout.pipe(process.stdout);
             child.stdin.write(`${id_token}\n`);
             child.stdin.end();
             yield new Promise((resolve) => {
                 child.on("close", resolve);
             });
-            (0,child_process__WEBPACK_IMPORTED_MODULE_2__.execSync)("ns cluster create --ephemeral=true --output_to=./clusterId.txt", {
+            (0,external_child_process_.execSync)("ns cluster create --ephemeral=true --output_to=./clusterId.txt", {
                 stdio: "inherit",
             });
-            // Skip for now
-            // core.saveState(common.clusterIdKey, fs.readFileSync("./clusterId.txt", "utf8"));
+            core.saveState(clusterIdKey, external_fs_.readFileSync("./clusterId.txt", "utf8"));
         }
         catch (error) {
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);
+            core.setFailed(error.message);
         }
     });
 }

@@ -34,8 +34,7 @@ async function run(): Promise<void> {
 			stdio: "inherit",
 		});
 
-		// Skip for now
-		// core.saveState(common.clusterIdKey, fs.readFileSync("./clusterId.txt", "utf8"));
+		core.saveState(common.clusterIdKey, fs.readFileSync("./clusterId.txt", "utf8"));
 	} catch (error) {
 		core.setFailed(error.message);
 	}
