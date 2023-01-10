@@ -20,7 +20,7 @@ async function run(): Promise<void> {
 
 		let id_token = await core.getIDToken();
 		let child = spawn("ns login robot", {
-			stdio: "pipe",
+			stdio: "inherit",
 		});
 		child.stdin.write(id_token);
 		child.stdin.end();

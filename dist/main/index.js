@@ -6755,7 +6755,7 @@ function run() {
             core.addPath(pathToCLI);
             let id_token = yield core.getIDToken();
             let child = (0,external_child_process_.spawn)("ns login robot", {
-                stdio: "pipe",
+                stdio: "inherit",
             });
             child.stdin.write(id_token);
             child.stdin.end();
