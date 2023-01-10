@@ -2,7 +2,7 @@ import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
 import * as common from "./common";
 import * as fs from "fs";
-import { spawn, execSync } from "child_process";
+import { exec, execSync } from "child_process";
 
 async function run(): Promise<void> {
 	try {
@@ -21,7 +21,7 @@ async function run(): Promise<void> {
 		execSync("ns version", { stdio: "inherit" });
 
 		let id_token = await core.getIDToken();
-		let child = spawn("ns login robot");
+		let child = exec("ns login robot");
 		child.stdout.pipe(process.stdout);
 		child.stdin.write(`${id_token}\n`);
 		child.stdin.end();

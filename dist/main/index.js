@@ -6774,7 +6774,7 @@ function run() {
             _actions_core__WEBPACK_IMPORTED_MODULE_0__.addPath(pathToCLI);
             (0,child_process__WEBPACK_IMPORTED_MODULE_2__.execSync)("ns version", { stdio: "inherit" });
             let id_token = yield _actions_core__WEBPACK_IMPORTED_MODULE_0__.getIDToken();
-            let child = (0,child_process__WEBPACK_IMPORTED_MODULE_2__.spawn)("ns login robot");
+            let child = (0,child_process__WEBPACK_IMPORTED_MODULE_2__.exec)("ns login robot");
             child.stdout.pipe(process.stdout);
             child.stdin.write(`${id_token}\n`);
             child.stdin.end();
