@@ -21,6 +21,10 @@ async function run(): Promise<void> {
 		execSync("ns version", { stdio: "inherit" });
 
 		const id_token = await core.getIDToken();
+		if (id_token === "") {
+			throw new Error("failed to generate id token");
+		}
+
 		const { GITHUB_REPOSITORY } = process.env;
 
 		execSync(`ns login robot github.com/${GITHUB_REPOSITORY} --log_actions`, {
