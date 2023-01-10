@@ -3,9 +3,13 @@ import { execSync } from "child_process";
 import * as common from "./common";
 
 async function run(): Promise<void> {
-	let clusterId = core.getState(common.clusterIdKey);
+	try {
+		let clusterId = core.getState(common.clusterIdKey);
 
-	execSync(`ns cluster destroy ${clusterId} --force`, { stdio: "inherit" });
+		execSync(`ns cluster destroy ${clusterId} --force`, { stdio: "inherit" });
+	} catch (error) {
+		core.setFailed(error.message);
+	}
 }
 
 run();
