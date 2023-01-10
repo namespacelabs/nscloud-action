@@ -39,6 +39,8 @@ async function run(): Promise<void> {
 		console.log(result.toString("utf8"));
 
 		execSync("ns version", { stdio: "inherit" });
+
+		console.log("done");
 	} catch (error) {
 		core.setFailed(error.message);
 	}
