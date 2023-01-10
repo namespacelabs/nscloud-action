@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
-import { exec, execSync } from "child_process";
+import { execSync } from "child_process";
 
 async function run(): Promise<void> {
 	try {

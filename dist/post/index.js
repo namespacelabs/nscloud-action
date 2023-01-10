@@ -39,7 +39,6 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log(`post-run path is ${process.env.PATH}`);
         (0,external_child_process_namespaceObject.execSync)("ns version", { stdio: "inherit" });
     });
 }
