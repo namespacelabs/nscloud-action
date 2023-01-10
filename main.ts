@@ -24,6 +24,7 @@ async function run(): Promise<void> {
 		// Expose the tool by adding it to the PATH
 		core.addPath(pathToCLI);
 
+		spawn("echo hello", { stdio: "inherit" });
 		spawn("ns version", { stdio: "inherit" });
 	} catch (error) {
 		core.setFailed(error.message);
