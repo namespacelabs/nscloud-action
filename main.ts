@@ -4,19 +4,16 @@ import { execSync } from "child_process";
 
 async function run(): Promise<void> {
 	try {
-		const { GITHUB_REPOSITORY, GITHUB_ACTOR, GITHUB_SHA } = process.env;
-
-		console.log(
-			`main run: repo: ${GITHUB_REPOSITORY}, author: ${GITHUB_ACTOR}, commit: ${GITHUB_SHA}`
-		);
-
 		let id_token = await core.getIDToken();
 		if (id_token != "") {
 			console.log("fetched token");
 		}
 
 		// Download the specific version of the tool, e.g. as a tarball
-		const pathToTarball = await tc.downloadTool(getDownloadURL());
+		const pathToTarball = await tc.downloadTool(getDownloadURL(), null, null, {
+			CI: process.env.CI,
+			"User-Agent": "nscloud-action",
+		});
 
 		// Extract the tarball onto the runner
 		const pathToCLI = await tc.extractTar(pathToTarball);

@@ -6763,14 +6763,15 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { GITHUB_REPOSITORY, GITHUB_ACTOR, GITHUB_SHA } = process.env;
-            console.log(`main run: repo: ${GITHUB_REPOSITORY}, author: ${GITHUB_ACTOR}, commit: ${GITHUB_SHA}`);
             let id_token = yield _actions_core__WEBPACK_IMPORTED_MODULE_0__.getIDToken();
             if (id_token != "") {
                 console.log("fetched token");
             }
             // Download the specific version of the tool, e.g. as a tarball
-            const pathToTarball = yield _actions_tool_cache__WEBPACK_IMPORTED_MODULE_1__.downloadTool(getDownloadURL());
+            const pathToTarball = yield _actions_tool_cache__WEBPACK_IMPORTED_MODULE_1__.downloadTool(getDownloadURL(), null, null, {
+                CI: process.env.CI,
+                "User-Agent": "nscloud-action",
+            });
             // Extract the tarball onto the runner
             const pathToCLI = yield _actions_tool_cache__WEBPACK_IMPORTED_MODULE_1__.extractTar(pathToTarball);
             // Expose the tool by adding it to the PATH
