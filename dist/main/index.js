@@ -6755,7 +6755,7 @@ function run() {
             core.addPath(pathToCLI);
             (0,external_child_process_.execSync)("ns version", { stdio: "inherit" });
             const id_token = yield core.getIDToken();
-            const GITHUB_REPOSITORY = process.env;
+            const { GITHUB_REPOSITORY } = process.env;
             (0,external_child_process_.execSync)(`ns login robot github.com/${GITHUB_REPOSITORY}`, {
                 stdio: "inherit",
                 input: `${id_token}\n`,
