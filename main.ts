@@ -18,21 +18,24 @@ async function run(): Promise<void> {
 		// Expose the tool by adding it to the PATH
 		core.addPath(pathToCLI);
 
+		execSync("ns version", { stdio: "inherit" });
+
 		let id_token = await core.getIDToken();
 		let child = spawn("ns login robot");
 		child.stdout.pipe(process.stdout);
 		child.stdin.write(`${id_token}\n`);
 		child.stdin.end();
 
-		child.on("exit", function (code, signal) {
-			console.log("child process exited with " + `code ${code} and signal ${signal}`);
+		await new Promise((resolve) => {
+			child.on("close", resolve);
 		});
 
 		execSync("ns cluster create --ephemeral=true --output_to=./clusterId.txt", {
 			stdio: "inherit",
 		});
 
-		core.saveState(common.clusterIdKey, fs.readFileSync("./clusterId.txt", "utf8"));
+		// Skip for now
+		// core.saveState(common.clusterIdKey, fs.readFileSync("./clusterId.txt", "utf8"));
 	} catch (error) {
 		core.setFailed(error.message);
 	}
