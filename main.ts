@@ -1,5 +1,7 @@
 import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
+import * as common from "./common";
+import * as fs from "fs";
 import { execSync } from "child_process";
 
 async function run(): Promise<void> {
@@ -21,7 +23,11 @@ async function run(): Promise<void> {
 		// Expose the tool by adding it to the PATH
 		core.addPath(pathToCLI);
 
-		execSync("ns version", { stdio: "inherit" });
+		execSync("ns cluster create --ephemeral=true --output_to=./clusterId.txt", {
+			stdio: "inherit",
+		});
+
+		core.saveState(common.clusterIdKey, fs.readFileSync("./clusterId.txt", "utf8"));
 	} catch (error) {
 		core.setFailed(error.message);
 	}
