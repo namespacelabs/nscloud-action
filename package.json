@@ -8,8 +8,8 @@
 		"@actions/tool-cache": "^2.0.1"
 	},
 	"scripts": {
-		"build": "concurrently -k 'yarn build:main' 'yarn build:post'",
-		"watch": "concurrently -k 'yarn watch:main' 'yarn watch:post'",
+		"build": "concurrently 'yarn build:main' 'yarn build:post'",
+		"watch": "concurrently 'yarn watch:main' 'yarn watch:post'",
 		"build:main": "ncc build main.ts --out dist/main",
 		"watch:main": "ncc build main.ts --out dist/main --watch",
 		"build:post": "ncc build post.ts --out dist/post",

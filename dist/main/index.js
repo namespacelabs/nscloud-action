@@ -6744,10 +6744,6 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let id_token = yield core.getIDToken();
-            if (id_token != "") {
-                console.log("fetched token");
-            }
             // Download the specific version of the tool, e.g. as a tarball
             const pathToTarball = yield tool_cache.downloadTool(getDownloadURL(), null, null, {
                 CI: process.env.CI,
@@ -6757,6 +6753,15 @@ function run() {
             const pathToCLI = yield tool_cache.extractTar(pathToTarball);
             // Expose the tool by adding it to the PATH
             core.addPath(pathToCLI);
+            let id_token = yield core.getIDToken();
+            let child = (0,external_child_process_.spawn)("ns login robot", {
+                stdio: "pipe",
+            });
+            child.stdin.write(id_token);
+            child.stdin.end();
+            yield new Promise((resolve) => {
+                child.on("close", resolve);
+            });
             (0,external_child_process_.execSync)("ns cluster create --ephemeral=true --output_to=./clusterId.txt", {
                 stdio: "inherit",
             });

@@ -2,15 +2,10 @@ import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
 import * as common from "./common";
 import * as fs from "fs";
-import { execSync } from "child_process";
+import { spawn, execSync } from "child_process";
 
 async function run(): Promise<void> {
 	try {
-		let id_token = await core.getIDToken();
-		if (id_token != "") {
-			console.log("fetched token");
-		}
-
 		// Download the specific version of the tool, e.g. as a tarball
 		const pathToTarball = await tc.downloadTool(getDownloadURL(), null, null, {
 			CI: process.env.CI,
@@ -22,6 +17,17 @@ async function run(): Promise<void> {
 
 		// Expose the tool by adding it to the PATH
 		core.addPath(pathToCLI);
+
+		let id_token = await core.getIDToken();
+		let child = spawn("ns login robot", {
+			stdio: "pipe",
+		});
+		child.stdin.write(id_token);
+		child.stdin.end();
+
+		await new Promise((resolve) => {
+			child.on("close", resolve);
+		});
 
 		execSync("ns cluster create --ephemeral=true --output_to=./clusterId.txt", {
 			stdio: "inherit",
