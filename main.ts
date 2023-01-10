@@ -20,8 +20,13 @@ async function run(): Promise<void> {
 
 		execSync("ns version", { stdio: "inherit" });
 
-		let id_token = await core.getIDToken();
-		execSync("ns login robot", { stdio: "inherit", input: `${id_token}\n` });
+		const id_token = await core.getIDToken();
+		const GITHUB_REPOSITORY = process.env;
+
+		execSync(`ns login robot github.com/${GITHUB_REPOSITORY}`, {
+			stdio: "inherit",
+			input: `${id_token}\n`,
+		});
 
 		execSync("ns cluster create --ephemeral=true --output_to=./clusterId.txt", {
 			stdio: "inherit",

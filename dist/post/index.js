@@ -2855,7 +2855,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let clusterId = core.getState(clusterIdKey);
+            const clusterId = core.getState(clusterIdKey);
             (0,external_child_process_namespaceObject.execSync)(`ns cluster destroy ${clusterId} --force`, { stdio: "inherit" });
         }
         catch (error) {

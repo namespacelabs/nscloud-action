@@ -6754,8 +6754,12 @@ function run() {
             // Expose the tool by adding it to the PATH
             core.addPath(pathToCLI);
             (0,external_child_process_.execSync)("ns version", { stdio: "inherit" });
-            let id_token = yield core.getIDToken();
-            (0,external_child_process_.execSync)("ns login robot", { stdio: "inherit", input: `${id_token}\n` });
+            const id_token = yield core.getIDToken();
+            const GITHUB_REPOSITORY = process.env;
+            (0,external_child_process_.execSync)(`ns login robot github.com/${GITHUB_REPOSITORY}`, {
+                stdio: "inherit",
+                input: `${id_token}\n`,
+            });
             (0,external_child_process_.execSync)("ns cluster create --ephemeral=true --output_to=./clusterId.txt", {
                 stdio: "inherit",
             });

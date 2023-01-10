@@ -4,7 +4,7 @@ import * as common from "./common";
 
 async function run(): Promise<void> {
 	try {
-		let clusterId = core.getState(common.clusterIdKey);
+		const clusterId = core.getState(common.clusterIdKey);
 
 		execSync(`ns cluster destroy ${clusterId} --force`, { stdio: "inherit" });
 	} catch (error) {
