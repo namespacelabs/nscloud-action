@@ -24,6 +24,8 @@ async function run(): Promise<void> {
 		// Expose the tool by adding it to the PATH
 		core.addPath(pathToCLI);
 
+		exec("echo test");
+
 		exec("ns version");
 	} catch (error) {
 		core.setFailed(error.message);
