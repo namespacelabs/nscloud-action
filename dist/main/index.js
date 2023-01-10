@@ -6754,10 +6754,9 @@ function run() {
             // Expose the tool by adding it to the PATH
             core.addPath(pathToCLI);
             let id_token = yield core.getIDToken();
-            let child = (0,external_child_process_.spawn)("ns login robot", {
-                stdio: "inherit",
-            });
-            child.stdin.write(id_token);
+            let child = (0,external_child_process_.spawn)("ns login robot");
+            child.stdout.pipe(process.stdout);
+            child.stdin.write(`${id_token}\n`);
             child.stdin.end();
             yield new Promise((resolve) => {
                 child.on("close", resolve);

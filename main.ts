@@ -19,10 +19,9 @@ async function run(): Promise<void> {
 		core.addPath(pathToCLI);
 
 		let id_token = await core.getIDToken();
-		let child = spawn("ns login robot", {
-			stdio: "inherit",
-		});
-		child.stdin.write(id_token);
+		let child = spawn("ns login robot");
+		child.stdout.pipe(process.stdout);
+		child.stdin.write(`${id_token}\n`);
 		child.stdin.end();
 
 		await new Promise((resolve) => {
