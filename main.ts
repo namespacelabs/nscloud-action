@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
-import { execSync } from "child_process";
+import { exec, execSync } from "child_process";
 
 async function run(): Promise<void> {
 	try {
@@ -23,6 +23,15 @@ async function run(): Promise<void> {
 
 		// Expose the tool by adding it to the PATH
 		core.addPath(pathToCLI);
+
+		exec("echo hello0", (error, stdout, stderr) => {
+			if (error) {
+				console.error(`exec error: ${error}`);
+				return;
+			}
+			console.log(`stdout: ${stdout}`);
+			console.error(`stderr: ${stderr}`);
+		});
 
 		execSync("echo hello1", { stdio: "pipe" });
 
