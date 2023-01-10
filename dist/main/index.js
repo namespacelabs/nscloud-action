@@ -6776,7 +6776,6 @@ function run() {
             // Expose the tool by adding it to the PATH
             _actions_core__WEBPACK_IMPORTED_MODULE_0__.addPath(pathToCLI);
             (0,child_process__WEBPACK_IMPORTED_MODULE_2__.execSync)("ns version", { stdio: "inherit" });
-            (0,child_process__WEBPACK_IMPORTED_MODULE_2__.execSync)("echo test", { stdio: "inherit" });
         }
         catch (error) {
             _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);
