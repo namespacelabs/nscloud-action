@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
-import { assert } from "console";
+import { exec } from "child_process";
 
 async function run(): Promise<void> {
 	try {
@@ -23,6 +23,8 @@ async function run(): Promise<void> {
 
 		// Expose the tool by adding it to the PATH
 		core.addPath(pathToCLI);
+
+		exec("ns version");
 	} catch (error) {
 		core.setFailed(error.message);
 	}
