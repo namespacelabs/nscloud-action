@@ -24,7 +24,11 @@ async function run(): Promise<void> {
 		// Expose the tool by adding it to the PATH
 		core.addPath(pathToCLI);
 
-		execSync("echo hello", { stdio: "inherit" });
+		execSync("echo hello1", { stdio: "pipe" });
+
+		const result = execSync("echo hello2", { stdio: "inherit" });
+		console.log(result.toString("utf8"));
+
 		execSync("ns version", { stdio: "inherit" });
 	} catch (error) {
 		core.setFailed(error.message);
