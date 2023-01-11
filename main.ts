@@ -3,6 +3,7 @@ import * as tc from "@actions/tool-cache";
 import * as common from "./common";
 import * as fs from "fs";
 import { execSync } from "child_process";
+import * as path from "path";
 
 async function run(): Promise<void> {
 	try {
@@ -24,7 +25,10 @@ async function run(): Promise<void> {
 			stdio: "inherit",
 		});
 
-		core.saveState(common.clusterIdKey, fs.readFileSync("./clusterId.txt", "utf8"));
+		let clusterId = fs.readFileSync("./clusterId.txt", "utf8");
+		core.saveState(common.clusterIdKey, clusterId);
+
+		prepareKubectl(pathToCLI, clusterId);
 	} catch (error) {
 		core.setFailed(error.message);
 	}
@@ -58,6 +62,16 @@ function getDownloadURL(): string {
 	}
 
 	return `https://get.namespace.so/packages/ns/latest?arch=${arch}&os=${os}`;
+}
+
+function prepareKubectl(pathToCLI: string, clusterId: string) {
+	const kubectlScript = `#!/bin/sh
+
+set -e
+
+./ns cluster kubectl ${clusterId} -- $@`;
+
+	fs.writeFileSync(path.join(pathToCLI, "kubectl"), kubectlScript, { mode: 0o777 });
 }
 
 run();

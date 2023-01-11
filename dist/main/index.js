@@ -6726,6 +6726,8 @@ const clusterIdKey = "clusterId";
 var external_fs_ = __nccwpck_require__(7147);
 // EXTERNAL MODULE: external "child_process"
 var external_child_process_ = __nccwpck_require__(2081);
+// EXTERNAL MODULE: external "path"
+var external_path_ = __nccwpck_require__(1017);
 ;// CONCATENATED MODULE: ./main.ts
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -6736,6 +6738,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+
 
 
 
@@ -6757,7 +6760,9 @@ function run() {
             (0,external_child_process_.execSync)("ns cluster create --ephemeral=true --output_to=./clusterId.txt", {
                 stdio: "inherit",
             });
-            core.saveState(clusterIdKey, external_fs_.readFileSync("./clusterId.txt", "utf8"));
+            let clusterId = external_fs_.readFileSync("./clusterId.txt", "utf8");
+            core.saveState(clusterIdKey, clusterId);
+            prepareKubectl(pathToCLI, clusterId);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -6789,6 +6794,14 @@ function getDownloadURL() {
             throw new Error(`Unsupported operating system: ${RUNNER_OS}`);
     }
     return `https://get.namespace.so/packages/ns/latest?arch=${arch}&os=${os}`;
+}
+function prepareKubectl(pathToCLI, clusterId) {
+    const kubectlScript = `#!/bin/sh
+
+set -e
+
+./ns cluster kubectl ${clusterId} -- $@`;
+    external_fs_.writeFileSync(external_path_.join(pathToCLI, "kubectl"), kubectlScript, { mode: 0o777 });
 }
 run();
 
