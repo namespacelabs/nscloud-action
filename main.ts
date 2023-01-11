@@ -42,8 +42,7 @@ function getDownloadURL(): string {
 			arch = "arm64";
 			break;
 		default:
-			console.log(`Unsupported architecture: ${RUNNER_ARCH}`);
-			break;
+			throw new Error(`Unsupported architecture: ${RUNNER_ARCH}`);
 	}
 
 	let os = "";
@@ -55,8 +54,7 @@ function getDownloadURL(): string {
 			os = "linux";
 			break;
 		default:
-			console.log(`Unsupported operating system: ${RUNNER_OS}`);
-			break;
+			throw new Error(`Unsupported operating system: ${RUNNER_OS}`);
 	}
 
 	return `https://get.namespace.so/packages/ns/latest?arch=${arch}&os=${os}`;
