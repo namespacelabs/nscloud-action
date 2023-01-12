@@ -6728,8 +6728,11 @@ var external_fs_ = __nccwpck_require__(7147);
 
 const clusterIdKey = "clusterId";
 function tmpFile(file) {
-    external_fs_.mkdirSync(external_path_.join(process.env.RUNNER_TEMP, "ns"));
-    return external_path_.join(process.env.RUNNER_TEMP, "ns", file);
+    let tmpDir = external_path_.join(process.env.RUNNER_TEMP, "ns");
+    if (!external_fs_.existsSync(tmpDir)) {
+        external_fs_.mkdirSync(tmpDir);
+    }
+    return external_path_.join(tmpDir, file);
 }
 
 // EXTERNAL MODULE: external "child_process"

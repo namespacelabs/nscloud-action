@@ -2845,8 +2845,11 @@ var external_fs_ = __nccwpck_require__(147);
 
 const clusterIdKey = "clusterId";
 function tmpFile(file) {
-    fs.mkdirSync(path.join(process.env.RUNNER_TEMP, "ns"));
-    return path.join(process.env.RUNNER_TEMP, "ns", file);
+    let tmpDir = path.join(process.env.RUNNER_TEMP, "ns");
+    if (!fs.existsSync(tmpDir)) {
+        fs.mkdirSync(tmpDir);
+    }
+    return path.join(tmpDir, file);
 }
 
 ;// CONCATENATED MODULE: ./post.ts

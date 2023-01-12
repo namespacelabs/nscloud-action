@@ -4,7 +4,11 @@ import * as fs from "fs";
 export const clusterIdKey = "clusterId";
 
 export function tmpFile(file: string): string {
-	fs.mkdirSync(path.join(process.env.RUNNER_TEMP, "ns"));
+	let tmpDir = path.join(process.env.RUNNER_TEMP, "ns");
 
-	return path.join(process.env.RUNNER_TEMP, "ns", file);
+	if (!fs.existsSync(tmpDir)) {
+		fs.mkdirSync(tmpDir);
+	}
+
+	return path.join(tmpDir, file);
 }
