@@ -1,3 +1,4 @@
+name: e2e
 on: [push]
 
 permissions:
@@ -16,3 +17,6 @@ jobs:
       - name: Apply configurations
         run: |
           kubectl apply -f testdata/kubernetes/demo.yaml
+      - name: Check result
+        run: |
+          kubectl get all -A
