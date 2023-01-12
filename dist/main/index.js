@@ -6761,9 +6761,7 @@ function run() {
             core.addPath(pathToCLI);
             (0,external_child_process_.execSync)("ns version", { stdio: "inherit" });
             let out = tmpFile("clusterId.txt");
-            (0,external_child_process_.execSync)(`ns cluster create --ephemeral=true --output_to=${out}`, {
-                stdio: "inherit",
-            });
+            (0,external_child_process_.execSync)(`ns cluster create --ephemeral=true --output_to=${out} --log_actions --debug_to_console`, { stdio: "inherit" });
             let clusterId = external_fs_.readFileSync(out, "utf8");
             core.saveState(clusterIdKey, clusterId);
             prepareKubectl(clusterId);
