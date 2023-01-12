@@ -2856,6 +2856,7 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const clusterId = core.getState(clusterIdKey);
+            // TODO replace with suspend & print instructions how to revive it.
             (0,external_child_process_namespaceObject.execSync)(`ns cluster destroy ${clusterId} --force`, { stdio: "inherit" });
         }
         catch (error) {
