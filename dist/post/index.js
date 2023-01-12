@@ -2836,8 +2836,14 @@ __nccwpck_require__.r(__webpack_exports__);
 var core = __nccwpck_require__(186);
 ;// CONCATENATED MODULE: external "child_process"
 const external_child_process_namespaceObject = require("child_process");
+// EXTERNAL MODULE: external "path"
+var external_path_ = __nccwpck_require__(17);
 ;// CONCATENATED MODULE: ./common.ts
+
 const clusterIdKey = "clusterId";
+function tmpFile(file) {
+    return path.join(process.env.RUNNER_TEMP, "ns", file);
+}
 
 ;// CONCATENATED MODULE: ./post.ts
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {

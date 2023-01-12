@@ -3,7 +3,6 @@ import * as tc from "@actions/tool-cache";
 import * as common from "./common";
 import * as fs from "fs";
 import { execSync } from "child_process";
-import * as path from "path";
 
 async function run(): Promise<void> {
 	try {
@@ -21,14 +20,15 @@ async function run(): Promise<void> {
 
 		execSync("ns version", { stdio: "inherit" });
 
-		execSync("ns cluster create --ephemeral=true --output_to=./clusterId.txt", {
+		let out = common.tmpFile("clusterId.txt");
+		execSync(`ns cluster create --ephemeral=true --output_to=${out}`, {
 			stdio: "inherit",
 		});
 
-		let clusterId = fs.readFileSync("./clusterId.txt", "utf8");
+		let clusterId = fs.readFileSync(out, "utf8");
 		core.saveState(common.clusterIdKey, clusterId);
 
-		prepareKubectl(pathToCLI, clusterId);
+		prepareKubectl(clusterId);
 	} catch (error) {
 		core.setFailed(error.message);
 	}
@@ -64,14 +64,22 @@ function getDownloadURL(): string {
 	return `https://get.namespace.so/packages/ns/latest?arch=${arch}&os=${os}`;
 }
 
-function prepareKubectl(pathToCLI: string, clusterId: string) {
-	const kubectlScript = `#!/bin/sh
+function prepareKubectl(clusterId: string) {
+	let out = common.tmpFile("kubectl.txt");
+	execSync(`ns sdk download --sdks=kubectl --output_to=${out}`, {
+		stdio: "inherit",
+	});
 
-set -e
+	let kubectlPath = fs.readFileSync(out, "utf8");
+	core.addPath(kubectlPath);
 
-./ns cluster kubectl ${clusterId} -- $@`;
+	out = common.tmpFile("kubeconfig.txt");
+	execSync(`ns cluster kubeconfig ${clusterId} --output_to=${out}`, {
+		stdio: "inherit",
+	});
 
-	fs.writeFileSync(path.join(pathToCLI, "kubectl"), kubectlScript, { mode: 0o777 });
+	let kubeconfig = fs.readFileSync(out, "utf8");
+	core.exportVariable("KUBECONFIG", kubeconfig);
 }
 
 run();

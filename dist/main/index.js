@@ -6719,15 +6719,19 @@ __nccwpck_require__.r(__webpack_exports__);
 var core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/tool-cache/lib/tool-cache.js
 var tool_cache = __nccwpck_require__(7784);
+// EXTERNAL MODULE: external "path"
+var external_path_ = __nccwpck_require__(1017);
 ;// CONCATENATED MODULE: ./common.ts
+
 const clusterIdKey = "clusterId";
+function tmpFile(file) {
+    return external_path_.join(process.env.RUNNER_TEMP, "ns", file);
+}
 
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(7147);
 // EXTERNAL MODULE: external "child_process"
 var external_child_process_ = __nccwpck_require__(2081);
-// EXTERNAL MODULE: external "path"
-var external_path_ = __nccwpck_require__(1017);
 ;// CONCATENATED MODULE: ./main.ts
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -6738,7 +6742,6 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-
 
 
 
@@ -6757,12 +6760,13 @@ function run() {
             // Expose the tool by adding it to the PATH
             core.addPath(pathToCLI);
             (0,external_child_process_.execSync)("ns version", { stdio: "inherit" });
-            (0,external_child_process_.execSync)("ns cluster create --ephemeral=true --output_to=./clusterId.txt", {
+            let out = tmpFile("clusterId.txt");
+            (0,external_child_process_.execSync)(`ns cluster create --ephemeral=true --output_to=${out}`, {
                 stdio: "inherit",
             });
-            let clusterId = external_fs_.readFileSync("./clusterId.txt", "utf8");
+            let clusterId = external_fs_.readFileSync(out, "utf8");
             core.saveState(clusterIdKey, clusterId);
-            prepareKubectl(pathToCLI, clusterId);
+            prepareKubectl(clusterId);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -6795,13 +6799,19 @@ function getDownloadURL() {
     }
     return `https://get.namespace.so/packages/ns/latest?arch=${arch}&os=${os}`;
 }
-function prepareKubectl(pathToCLI, clusterId) {
-    const kubectlScript = `#!/bin/sh
-
-set -e
-
-./ns cluster kubectl ${clusterId} -- $@`;
-    external_fs_.writeFileSync(external_path_.join(pathToCLI, "kubectl"), kubectlScript, { mode: 0o777 });
+function prepareKubectl(clusterId) {
+    let out = tmpFile("kubectl.txt");
+    (0,external_child_process_.execSync)(`ns sdk download --sdks=kubectl --output_to=${out}`, {
+        stdio: "inherit",
+    });
+    let kubectlPath = external_fs_.readFileSync(out, "utf8");
+    core.addPath(kubectlPath);
+    out = tmpFile("kubeconfig.txt");
+    (0,external_child_process_.execSync)(`ns cluster kubeconfig ${clusterId} --output_to=${out}`, {
+        stdio: "inherit",
+    });
+    let kubeconfig = external_fs_.readFileSync(out, "utf8");
+    core.exportVariable("KUBECONFIG", kubeconfig);
 }
 run();
 
