@@ -18,6 +18,9 @@ async function run(): Promise<void> {
 		// Expose the tool by adding it to the PATH
 		core.addPath(pathToCLI);
 
+		// Start downloading kubectl while we prepare the cluster.
+		let kubectl = prepareKubectl();
+
 		execSync("ns version", { stdio: "inherit" });
 
 		let out = common.tmpFile("clusterId.txt");
@@ -29,7 +32,9 @@ async function run(): Promise<void> {
 		let clusterId = fs.readFileSync(out, "utf8");
 		core.saveState(common.clusterIdKey, clusterId);
 
-		prepareKubectl(clusterId);
+		prepareKubeconfig(clusterId);
+
+		await kubectl;
 	} catch (error) {
 		core.setFailed(error.message);
 	}
@@ -65,7 +70,17 @@ function getDownloadURL(): string {
 	return `https://get.namespace.so/packages/ns/latest?arch=${arch}&os=${os}`;
 }
 
-function prepareKubectl(clusterId: string) {
+function prepareKubeconfig(clusterId: string) {
+	let out = common.tmpFile("kubeconfig.txt");
+	execSync(`ns cluster kubeconfig ${clusterId} --output_to=${out}`, {
+		stdio: "inherit",
+	});
+
+	let kubeconfig = fs.readFileSync(out, "utf8");
+	core.exportVariable("KUBECONFIG", kubeconfig);
+}
+
+async function prepareKubectl() {
 	let out = common.tmpFile("kubectl.txt");
 	execSync(`ns sdk download --sdks=kubectl --output_to=${out}`, {
 		stdio: "inherit",
@@ -73,14 +88,6 @@ function prepareKubectl(clusterId: string) {
 
 	let kubectlPath = fs.readFileSync(out, "utf8");
 	core.addPath(kubectlPath);
-
-	out = common.tmpFile("kubeconfig.txt");
-	execSync(`ns cluster kubeconfig ${clusterId} --output_to=${out}`, {
-		stdio: "inherit",
-	});
-
-	let kubeconfig = fs.readFileSync(out, "utf8");
-	core.exportVariable("KUBECONFIG", kubeconfig);
 }
 
 run();

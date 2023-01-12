@@ -6764,12 +6764,15 @@ function run() {
             const pathToCLI = yield tool_cache.extractTar(pathToTarball);
             // Expose the tool by adding it to the PATH
             core.addPath(pathToCLI);
+            // Start downloading kubectl while we prepare the cluster.
+            let kubectl = prepareKubectl();
             (0,external_child_process_.execSync)("ns version", { stdio: "inherit" });
             let out = tmpFile("clusterId.txt");
             (0,external_child_process_.execSync)(`ns cluster create --ephemeral=true --output_to=${out} --log_actions --debug_to_console`, { stdio: "inherit" });
             let clusterId = external_fs_.readFileSync(out, "utf8");
             core.saveState(clusterIdKey, clusterId);
-            prepareKubectl(clusterId);
+            prepareKubeconfig(clusterId);
+            yield kubectl;
         }
         catch (error) {
             core.setFailed(error.message);
@@ -6802,19 +6805,23 @@ function getDownloadURL() {
     }
     return `https://get.namespace.so/packages/ns/latest?arch=${arch}&os=${os}`;
 }
-function prepareKubectl(clusterId) {
-    let out = tmpFile("kubectl.txt");
-    (0,external_child_process_.execSync)(`ns sdk download --sdks=kubectl --output_to=${out}`, {
-        stdio: "inherit",
-    });
-    let kubectlPath = external_fs_.readFileSync(out, "utf8");
-    core.addPath(kubectlPath);
-    out = tmpFile("kubeconfig.txt");
+function prepareKubeconfig(clusterId) {
+    let out = tmpFile("kubeconfig.txt");
     (0,external_child_process_.execSync)(`ns cluster kubeconfig ${clusterId} --output_to=${out}`, {
         stdio: "inherit",
     });
     let kubeconfig = external_fs_.readFileSync(out, "utf8");
     core.exportVariable("KUBECONFIG", kubeconfig);
+}
+function prepareKubectl() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let out = tmpFile("kubectl.txt");
+        (0,external_child_process_.execSync)(`ns sdk download --sdks=kubectl --output_to=${out}`, {
+            stdio: "inherit",
+        });
+        let kubectlPath = external_fs_.readFileSync(out, "utf8");
+        core.addPath(kubectlPath);
+    });
 }
 run();
 
