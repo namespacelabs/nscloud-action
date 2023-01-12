@@ -6768,7 +6768,9 @@ function run() {
             let kubectl = prepareKubectl();
             (0,external_child_process_.execSync)("ns version", { stdio: "inherit" });
             let out = tmpFile("clusterId.txt");
-            (0,external_child_process_.execSync)(`ns cluster create --ephemeral=true --output_to=${out} --log_actions --debug_to_console`, { stdio: "inherit" });
+            (0,external_child_process_.execSync)(`ns cluster create --ephemeral=true --output_to=${out} --debug_to_console`, {
+                stdio: "inherit",
+            });
             let clusterId = external_fs_.readFileSync(out, "utf8");
             core.saveState(clusterIdKey, clusterId);
             prepareKubeconfig(clusterId);
@@ -6816,7 +6818,7 @@ function prepareKubeconfig(clusterId) {
 function prepareKubectl() {
     return __awaiter(this, void 0, void 0, function* () {
         let out = tmpFile("kubectl.txt");
-        (0,external_child_process_.execSync)(`ns sdk download --sdks=kubectl --output_to=${out}`, {
+        (0,external_child_process_.execSync)(`ns sdk download --sdks=kubectl --output_to=${out} --log_actions=false`, {
             stdio: "inherit",
         });
         let kubectlPath = external_fs_.readFileSync(out, "utf8");

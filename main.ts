@@ -24,10 +24,9 @@ async function run(): Promise<void> {
 		execSync("ns version", { stdio: "inherit" });
 
 		let out = common.tmpFile("clusterId.txt");
-		execSync(
-			`ns cluster create --ephemeral=true --output_to=${out} --log_actions --debug_to_console`,
-			{ stdio: "inherit" }
-		);
+		execSync(`ns cluster create --ephemeral=true --output_to=${out} --debug_to_console`, {
+			stdio: "inherit",
+		});
 
 		let clusterId = fs.readFileSync(out, "utf8");
 		core.saveState(common.clusterIdKey, clusterId);
@@ -82,7 +81,7 @@ function prepareKubeconfig(clusterId: string) {
 
 async function prepareKubectl() {
 	let out = common.tmpFile("kubectl.txt");
-	execSync(`ns sdk download --sdks=kubectl --output_to=${out}`, {
+	execSync(`ns sdk download --sdks=kubectl --output_to=${out} --log_actions=false`, {
 		stdio: "inherit",
 	});
 
