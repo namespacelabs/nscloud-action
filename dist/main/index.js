@@ -6721,15 +6721,17 @@ var core = __nccwpck_require__(2186);
 var tool_cache = __nccwpck_require__(7784);
 // EXTERNAL MODULE: external "path"
 var external_path_ = __nccwpck_require__(1017);
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __nccwpck_require__(7147);
 ;// CONCATENATED MODULE: ./common.ts
+
 
 const clusterIdKey = "clusterId";
 function tmpFile(file) {
+    external_fs_.mkdirSync(external_path_.join(process.env.RUNNER_TEMP, "ns"));
     return external_path_.join(process.env.RUNNER_TEMP, "ns", file);
 }
 
-// EXTERNAL MODULE: external "fs"
-var external_fs_ = __nccwpck_require__(7147);
 // EXTERNAL MODULE: external "child_process"
 var external_child_process_ = __nccwpck_require__(2081);
 ;// CONCATENATED MODULE: ./main.ts

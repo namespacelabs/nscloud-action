@@ -2838,10 +2838,14 @@ var core = __nccwpck_require__(186);
 const external_child_process_namespaceObject = require("child_process");
 // EXTERNAL MODULE: external "path"
 var external_path_ = __nccwpck_require__(17);
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __nccwpck_require__(147);
 ;// CONCATENATED MODULE: ./common.ts
+
 
 const clusterIdKey = "clusterId";
 function tmpFile(file) {
+    fs.mkdirSync(path.join(process.env.RUNNER_TEMP, "ns"));
     return path.join(process.env.RUNNER_TEMP, "ns", file);
 }
 
