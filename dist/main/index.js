@@ -6768,14 +6768,16 @@ function run() {
             let kubectl = prepareKubectl();
             (0,external_child_process_.execSync)("ns version", { stdio: "inherit" });
             let out = tmpFile("clusterId.txt");
-            (0,external_child_process_.execSync)(`ns cluster create --ephemeral=true --output_to=${out} --debug_to_console`, {
-                stdio: "inherit",
-            });
+            let cmd = `ns cluster create --output_to=${out}`;
+            if (core.getInput("preview") != "true") {
+                cmd = cmd + " --ephemeral";
+            }
+            (0,external_child_process_.execSync)(cmd, { stdio: "inherit" });
             let clusterId = external_fs_.readFileSync(out, "utf8");
             core.saveState(clusterIdKey, clusterId);
             prepareKubeconfig(clusterId);
             yield kubectl;
-            console.log("Successfully created an ephemeral nscloud cluster.\n`kubectl` has been installed and preconfigured.");
+            console.log("Successfully created an nscloud cluster.\n`kubectl` has been installed and preconfigured.");
         }
         catch (error) {
             core.setFailed(error.message);

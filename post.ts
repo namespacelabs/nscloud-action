@@ -6,7 +6,7 @@ async function run(): Promise<void> {
 	try {
 		const clusterId = core.getState(common.clusterIdKey);
 
-		if (clusterId != "") {
+		if (clusterId != "" && core.getInput("preview") != "true") {
 			// TODO replace with suspend & print instructions how to revive it.
 			execSync(`ns cluster destroy ${clusterId} --force`, { stdio: "inherit" });
 		}

@@ -24,9 +24,11 @@ async function run(): Promise<void> {
 		execSync("ns version", { stdio: "inherit" });
 
 		let out = common.tmpFile("clusterId.txt");
-		execSync(`ns cluster create --ephemeral=true --output_to=${out} --debug_to_console`, {
-			stdio: "inherit",
-		});
+		let cmd = `ns cluster create --output_to=${out}`;
+		if (core.getInput("preview") != "true") {
+			cmd = cmd + " --ephemeral";
+		}
+		execSync(cmd, { stdio: "inherit" });
 
 		let clusterId = fs.readFileSync(out, "utf8");
 		core.saveState(common.clusterIdKey, clusterId);
@@ -36,7 +38,7 @@ async function run(): Promise<void> {
 		await kubectl;
 
 		console.log(
-			"Successfully created an ephemeral nscloud cluster.\n`kubectl` has been installed and preconfigured."
+			"Successfully created an nscloud cluster.\n`kubectl` has been installed and preconfigured."
 		);
 	} catch (error) {
 		core.setFailed(error.message);
