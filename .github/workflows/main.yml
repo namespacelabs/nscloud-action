@@ -22,4 +22,4 @@ jobs:
         shell: bash
       - name: Check result
         run: |
-          kubectl -n demo-app get all
+          kubectl get all -A
