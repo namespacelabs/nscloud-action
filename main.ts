@@ -34,6 +34,10 @@ async function run(): Promise<void> {
 		prepareKubeconfig(clusterId);
 
 		await kubectl;
+
+		console.log(
+			"Successfully created an ephemeral nscloud cluster.\n`kubectl` has been installed and preconfigured."
+		);
 	} catch (error) {
 		core.setFailed(error.message);
 	}

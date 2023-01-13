@@ -6775,6 +6775,7 @@ function run() {
             core.saveState(clusterIdKey, clusterId);
             prepareKubeconfig(clusterId);
             yield kubectl;
+            console.log("Successfully created an ephemeral nscloud cluster.\n`kubectl` has been installed and preconfigured.");
         }
         catch (error) {
             core.setFailed(error.message);
