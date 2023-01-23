@@ -38,7 +38,7 @@ async function run(): Promise<void> {
 
 		await kubectl;
 
-		let registry = fs.readFileSync(idFile, "utf8");
+		let registry = fs.readFileSync(registryFile, "utf8");
 		core.setOutput("registry-address", registry);
 
 		console.log(

@@ -6778,7 +6778,7 @@ function run() {
             core.saveState(clusterIdKey, clusterId);
             prepareKubeconfig(clusterId);
             yield kubectl;
-            let registry = external_fs_.readFileSync(idFile, "utf8");
+            let registry = external_fs_.readFileSync(registryFile, "utf8");
             core.setOutput("registry-address", registry);
             console.log("Successfully created an nscloud cluster.\n`kubectl` has been installed and preconfigured.");
         }
