@@ -5,6 +5,9 @@ inputs:
     description: "If set to 'true', the cluster created will NOT be destroyed at the end."
     required: false
     default: "false"
+outputs:
+  registry-address:
+    description: "Endpoint address of the registry set up for the Namespace Cloud cluster."
 runs:
   using: node16
   main: dist/main/index.js

@@ -13,7 +13,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Create Cluster
+        id: nscloud
         uses: ./ # Uses an action in the root directory
+      - name: Output registry
+        run: |
+          echo "${{ steps.nscloud.outputs.registry-address }}"
       - name: Apply configurations
         run: |
           kubectl apply -f testdata/kubernetes/demo.yaml

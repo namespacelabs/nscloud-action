@@ -6767,16 +6767,19 @@ function run() {
             // Start downloading kubectl while we prepare the cluster.
             let kubectl = prepareKubectl();
             (0,external_child_process_.execSync)("ns version", { stdio: "inherit" });
-            let out = tmpFile("clusterId.txt");
-            let cmd = `ns cluster create --output_to=${out}`;
+            let idFile = tmpFile("clusterId.txt");
+            let registryFile = tmpFile("registry.txt");
+            let cmd = `ns cluster create --output_to=${idFile} --output_registry_to=${registryFile}`;
             if (core.getInput("preview") != "true") {
                 cmd = cmd + " --ephemeral";
             }
             (0,external_child_process_.execSync)(cmd, { stdio: "inherit" });
-            let clusterId = external_fs_.readFileSync(out, "utf8");
+            let clusterId = external_fs_.readFileSync(idFile, "utf8");
             core.saveState(clusterIdKey, clusterId);
             prepareKubeconfig(clusterId);
             yield kubectl;
+            let registry = external_fs_.readFileSync(idFile, "utf8");
+            core.setOutput("registry-address", registry);
             console.log("Successfully created an nscloud cluster.\n`kubectl` has been installed and preconfigured.");
         }
         catch (error) {

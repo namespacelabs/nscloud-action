@@ -23,19 +23,23 @@ async function run(): Promise<void> {
 
 		execSync("ns version", { stdio: "inherit" });
 
-		let out = common.tmpFile("clusterId.txt");
-		let cmd = `ns cluster create --output_to=${out}`;
+		let idFile = common.tmpFile("clusterId.txt");
+		let registryFile = common.tmpFile("registry.txt");
+		let cmd = `ns cluster create --output_to=${idFile} --output_registry_to=${registryFile}`;
 		if (core.getInput("preview") != "true") {
 			cmd = cmd + " --ephemeral";
 		}
 		execSync(cmd, { stdio: "inherit" });
 
-		let clusterId = fs.readFileSync(out, "utf8");
+		let clusterId = fs.readFileSync(idFile, "utf8");
 		core.saveState(common.clusterIdKey, clusterId);
 
 		prepareKubeconfig(clusterId);
 
 		await kubectl;
+
+		let registry = fs.readFileSync(idFile, "utf8");
+		core.setOutput("registry-address", registry);
 
 		console.log(
 			"Successfully created an nscloud cluster.\n`kubectl` has been installed and preconfigured."
