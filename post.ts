@@ -7,6 +7,8 @@ async function run(): Promise<void> {
 		const clusterId = core.getState(common.clusterIdKey);
 
 		if (clusterId != "" && core.getInput("preview") != "true") {
+			execSync("ns exchange-github-token", { stdio: "inherit" });
+
 			// TODO replace with suspend & print instructions how to revive it.
 			execSync(`ns cluster destroy ${clusterId} --force`, { stdio: "inherit" });
 		}

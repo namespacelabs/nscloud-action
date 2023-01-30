@@ -6724,20 +6724,6 @@ var external_path_ = __nccwpck_require__(1017);
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(7147);
 ;// CONCATENATED MODULE: ./common.ts
-
-
-const clusterIdKey = "clusterId";
-function tmpFile(file) {
-    let tmpDir = external_path_.join(process.env.RUNNER_TEMP, "ns");
-    if (!external_fs_.existsSync(tmpDir)) {
-        external_fs_.mkdirSync(tmpDir);
-    }
-    return external_path_.join(tmpDir, file);
-}
-
-// EXTERNAL MODULE: external "child_process"
-var external_child_process_ = __nccwpck_require__(2081);
-;// CONCATENATED MODULE: ./main.ts
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -6751,40 +6737,25 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
-
-function run() {
+const clusterIdKey = "clusterId";
+function tmpFile(file) {
+    let tmpDir = external_path_.join(process.env.RUNNER_TEMP, "ns");
+    if (!external_fs_.existsSync(tmpDir)) {
+        external_fs_.mkdirSync(tmpDir);
+    }
+    return external_path_.join(tmpDir, file);
+}
+function installNs() {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            // Download the specific version of the tool, e.g. as a tarball
-            const pathToTarball = yield tool_cache.downloadTool(getDownloadURL(), null, null, {
-                CI: process.env.CI,
-                "User-Agent": "nscloud-action",
-            });
-            // Extract the tarball onto the runner
-            const pathToCLI = yield tool_cache.extractTar(pathToTarball);
-            // Expose the tool by adding it to the PATH
-            core.addPath(pathToCLI);
-            // Start downloading kubectl while we prepare the cluster.
-            let kubectl = prepareKubectl();
-            (0,external_child_process_.execSync)("ns version", { stdio: "inherit" });
-            let idFile = tmpFile("clusterId.txt");
-            let registryFile = tmpFile("registry.txt");
-            let cmd = `ns cluster create --output_to=${idFile} --output_registry_to=${registryFile}`;
-            if (core.getInput("preview") != "true") {
-                cmd = cmd + " --ephemeral";
-            }
-            (0,external_child_process_.execSync)(cmd, { stdio: "inherit" });
-            let clusterId = external_fs_.readFileSync(idFile, "utf8");
-            core.saveState(clusterIdKey, clusterId);
-            prepareKubeconfig(clusterId);
-            yield kubectl;
-            let registry = external_fs_.readFileSync(registryFile, "utf8");
-            core.setOutput("registry-address", registry);
-            console.log("Successfully created an nscloud cluster.\n`kubectl` has been installed and preconfigured.");
-        }
-        catch (error) {
-            core.setFailed(error.message);
-        }
+        // Download the specific version of the tool, e.g. as a tarball
+        const pathToTarball = yield tool_cache.downloadTool(getDownloadURL(), null, null, {
+            CI: process.env.CI,
+            "User-Agent": "nscloud-action",
+        });
+        // Extract the tarball onto the runner
+        const pathToCLI = yield tool_cache.extractTar(pathToTarball);
+        // Expose the tool by adding it to the PATH
+        core.addPath(pathToCLI);
     });
 }
 function getDownloadURL() {
@@ -6813,6 +6784,51 @@ function getDownloadURL() {
     }
     return `https://get.namespace.so/packages/ns/latest?arch=${arch}&os=${os}`;
 }
+
+// EXTERNAL MODULE: external "child_process"
+var external_child_process_ = __nccwpck_require__(2081);
+;// CONCATENATED MODULE: ./main.ts
+var main_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+
+
+
+function run() {
+    return main_awaiter(this, void 0, void 0, function* () {
+        try {
+            yield installNs();
+            // Start downloading kubectl while we prepare the cluster.
+            let kubectl = prepareKubectl();
+            (0,external_child_process_.execSync)("ns version", { stdio: "inherit" });
+            (0,external_child_process_.execSync)("ns exchange-github-token", { stdio: "inherit" });
+            let idFile = tmpFile("clusterId.txt");
+            let registryFile = tmpFile("registry.txt");
+            let cmd = `ns cluster create --output_to=${idFile} --output_registry_to=${registryFile}`;
+            if (core.getInput("preview") != "true") {
+                cmd = cmd + " --ephemeral";
+            }
+            (0,external_child_process_.execSync)(cmd, { stdio: "inherit" });
+            let clusterId = external_fs_.readFileSync(idFile, "utf8");
+            core.saveState(clusterIdKey, clusterId);
+            prepareKubeconfig(clusterId);
+            yield kubectl;
+            let registry = external_fs_.readFileSync(registryFile, "utf8");
+            core.setOutput("registry-address", registry);
+            console.log("Successfully created an nscloud cluster.\n`kubectl` has been installed and preconfigured.");
+        }
+        catch (error) {
+            core.setFailed(error.message);
+        }
+    });
+}
 function prepareKubeconfig(clusterId) {
     let out = tmpFile("kubeconfig.txt");
     (0,external_child_process_.execSync)(`ns cluster kubeconfig ${clusterId} --output_to=${out}`, {
@@ -6822,7 +6838,7 @@ function prepareKubeconfig(clusterId) {
     core.exportVariable("KUBECONFIG", kubeconfig);
 }
 function prepareKubectl() {
-    return __awaiter(this, void 0, void 0, function* () {
+    return main_awaiter(this, void 0, void 0, function* () {
         let out = tmpFile("kubectl.txt");
         (0,external_child_process_.execSync)(`ns sdk download --sdks=kubectl --output_to=${out} --log_actions=false`, {
             stdio: "inherit",
