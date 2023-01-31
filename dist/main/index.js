@@ -6811,7 +6811,7 @@ function run() {
             (0,external_child_process_.execSync)("ns exchange-github-token", { stdio: "inherit" });
             let idFile = tmpFile("clusterId.txt");
             let registryFile = tmpFile("registry.txt");
-            let cmd = `ns cluster create --output_to=${idFile} --output_registry_to=${registryFile}`;
+            let cmd = `ns cluster create --wait_kube_system --output_to=${idFile} --output_registry_to=${registryFile}`;
             if (core.getInput("preview") != "true") {
                 cmd = cmd + " --ephemeral";
             }

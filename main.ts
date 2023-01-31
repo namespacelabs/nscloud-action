@@ -16,7 +16,7 @@ async function run(): Promise<void> {
 
 		let idFile = common.tmpFile("clusterId.txt");
 		let registryFile = common.tmpFile("registry.txt");
-		let cmd = `ns cluster create --output_to=${idFile} --output_registry_to=${registryFile}`;
+		let cmd = `ns cluster create --wait_kube_system --output_to=${idFile} --output_registry_to=${registryFile}`;
 		if (core.getInput("preview") != "true") {
 			cmd = cmd + " --ephemeral";
 		}
