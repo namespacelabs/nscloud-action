@@ -6758,6 +6758,7 @@ function installNs() {
         const pathToCLI = yield tc.extractTar(pathToTarball);
         // Expose the tool by adding it to the PATH
         core.addPath(pathToCLI);
+        core.exportVariable("NS_DO_NOT_UPDATE", "true");
     });
 }
 function getDownloadURL() {
