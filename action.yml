@@ -6,7 +6,7 @@ inputs:
     required: false
     default: "false"
   wait-kube-system:
-    description: "If set to 'true', the action waits for coredns and local-path-provisioner to be ready."
+    description: "If set to 'true', wait for coredns and local-path-provisioner to be ready."
     required: false
     default: "false"
 outputs:
