@@ -7,10 +7,10 @@ async function run(): Promise<void> {
 	try {
 		await common.installNs();
 
+		core.setCommandEcho(true);
+
 		// Start downloading kubectl while we prepare the cluster.
 		let kubectl = prepareKubectl();
-
-		execSync("ns version", { stdio: "inherit" });
 
 		execSync("ns exchange-github-token", { stdio: "inherit" });
 
@@ -19,6 +19,9 @@ async function run(): Promise<void> {
 		let cmd = `ns cluster create --wait_kube_system --output_to=${idFile} --output_registry_to=${registryFile}`;
 		if (core.getInput("preview") != "true") {
 			cmd = cmd + " --ephemeral";
+		}
+		if (core.getInput("wait-kube-system") == "true") {
+			cmd = cmd + " --wait_kube_system";
 		}
 		execSync(cmd, { stdio: "inherit" });
 

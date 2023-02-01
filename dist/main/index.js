@@ -6805,15 +6805,18 @@ function run() {
     return main_awaiter(this, void 0, void 0, function* () {
         try {
             yield installNs();
+            core.setCommandEcho(true);
             // Start downloading kubectl while we prepare the cluster.
             let kubectl = prepareKubectl();
-            (0,external_child_process_.execSync)("ns version", { stdio: "inherit" });
             (0,external_child_process_.execSync)("ns exchange-github-token", { stdio: "inherit" });
             let idFile = tmpFile("clusterId.txt");
             let registryFile = tmpFile("registry.txt");
             let cmd = `ns cluster create --wait_kube_system --output_to=${idFile} --output_registry_to=${registryFile}`;
             if (core.getInput("preview") != "true") {
                 cmd = cmd + " --ephemeral";
+            }
+            if (core.getInput("wait-kube-system") == "true") {
+                cmd = cmd + " --wait_kube_system";
             }
             (0,external_child_process_.execSync)(cmd, { stdio: "inherit" });
             let clusterId = external_fs_.readFileSync(idFile, "utf8");

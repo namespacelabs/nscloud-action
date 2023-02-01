@@ -21,9 +21,9 @@ jobs:
       - name: Apply configurations
         run: |
           kubectl apply -f testdata/kubernetes/demo.yaml
-      - name: Sleep for 10 seconds
-        run: sleep 10s
-        shell: bash
+      - name: Wait until Redis is available
+        run: |
+          kubectl rollout status -n demo-app --watch --timeout=90s statefulset/demo-redis-server
       - name: Check result
         run: |
           kubectl get all -A
