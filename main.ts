@@ -2,7 +2,6 @@ import * as core from "@actions/core";
 import * as common from "./common";
 import * as fs from "fs";
 import { execSync } from "child_process";
-import { connected } from "process";
 
 async function run(): Promise<void> {
 	try {
