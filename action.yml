@@ -8,7 +8,7 @@ inputs:
   wait-kube-system:
     description: "If set to 'true', wait for coredns and local-path-provisioner to be ready."
     required: false
-    default: "false"
+    default: "true"
 outputs:
   registry-address:
     description: "Endpoint address of the registry set up for the Namespace Cloud cluster."
