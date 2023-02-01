@@ -12,7 +12,7 @@ async function run(): Promise<void> {
 		// Start downloading kubectl while we prepare the cluster.
 		let kubectl = prepareKubectl();
 
-		execSync("ns exchange-github-token", { stdio: "inherit" });
+		execSync("ns auth exchange-github-token", { stdio: "inherit" });
 
 		let idFile = common.tmpFile("clusterId.txt");
 		let registryFile = common.tmpFile("registry.txt");

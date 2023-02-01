@@ -6809,7 +6809,7 @@ function run() {
             core.setCommandEcho(true);
             // Start downloading kubectl while we prepare the cluster.
             let kubectl = prepareKubectl();
-            (0,external_child_process_.execSync)("ns exchange-github-token", { stdio: "inherit" });
+            (0,external_child_process_.execSync)("ns auth exchange-github-token", { stdio: "inherit" });
             let idFile = tmpFile("clusterId.txt");
             let registryFile = tmpFile("registry.txt");
             let cmd = `ns cluster create --output_to=${idFile} --output_registry_to=${registryFile}`;
