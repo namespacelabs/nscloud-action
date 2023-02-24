@@ -38,9 +38,9 @@ async function run(): Promise<void> {
 		console.log(`Successfully created an nscloud cluster.
 \`kubectl\` has been installed and preconfigured.
 
-You can find logs and jump into SSH at https://cloud.namespace.so/clusters/${clusterId}.
+You can find logs and jump into SSH at https://cloud.namespace.so/clusters/${clusterId}
 Or install \`nsc\` from https://github.com/namespacelabs/foundation/releases/latest
-and follow the cluster logs with \`nsc cluster logs ${clusterId} -f\`.`);
+and follow the cluster logs with \`nsc cluster logs ${clusterId} -f\``);
 	} catch (error) {
 		core.setFailed(error.message);
 	}
