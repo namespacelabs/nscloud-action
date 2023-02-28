@@ -1,16 +1,17 @@
 import * as core from "@actions/core";
-import { execSync } from "child_process";
-import * as common from "./common";
+import * as exec from "@actions/exec";
+import { ClusterIdKey, ensureFreshTenantToken } from "./common";
 
 async function run(): Promise<void> {
 	try {
-		const clusterId = core.getState(common.clusterIdKey);
+		const clusterId = core.getState(ClusterIdKey);
 
 		if (clusterId != "" && core.getInput("preview") != "true") {
-			execSync("ns exchange-github-token", { stdio: "inherit" });
+			// Re-auth in case the previous token has expired.
+			await ensureFreshTenantToken();
 
 			// TODO replace with suspend & print instructions how to revive it.
-			execSync(`ns cluster destroy ${clusterId} --force`, { stdio: "inherit" });
+			await exec.exec(`ns cluster destroy ${clusterId} --force`);
 		}
 	} catch (error) {
 		core.setFailed(error.message);

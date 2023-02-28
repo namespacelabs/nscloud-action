@@ -2,11 +2,12 @@ import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
 import * as path from "path";
 import * as fs from "fs";
+import * as exec from "@actions/exec";
 
-export const clusterIdKey = "clusterId";
+export const ClusterIdKey = "clusterId";
 
 export function tmpFile(file: string): string {
-	let tmpDir = path.join(process.env.RUNNER_TEMP, "ns");
+	const tmpDir = path.join(process.env.RUNNER_TEMP, "ns");
 
 	if (!fs.existsSync(tmpDir)) {
 		fs.mkdirSync(tmpDir);
@@ -59,4 +60,8 @@ function getDownloadURL(): string {
 	}
 
 	return `https://get.namespace.so/packages/ns/latest?arch=${arch}&os=${os}`;
+}
+
+export async function ensureFreshTenantToken() {
+	await exec.exec("ns auth exchange-github-token");
 }
