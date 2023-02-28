@@ -1,38 +1,32 @@
 import * as core from "@actions/core";
-import * as common from "./common";
 import * as fs from "fs";
-import { execSync } from "child_process";
+import * as exec from "@actions/exec";
+import { ClusterIdKey, ensureFreshTenantToken, installNs, tmpFile } from "./common";
 
 async function run(): Promise<void> {
 	try {
-		await common.installNs();
+		await installNs();
 
 		core.setCommandEcho(true);
 
 		// Start downloading kubectl while we prepare the cluster.
-		let kubectl = prepareKubectl();
+		const kubectlDir = downloadKubectl();
 
-		execSync("ns auth exchange-github-token", { stdio: "inherit" });
+		await ensureFreshTenantToken();
 
-		let idFile = common.tmpFile("clusterId.txt");
-		let registryFile = common.tmpFile("registry.txt");
-		let cmd = `ns cluster create --output_to=${idFile} --output_registry_to=${registryFile}`;
-		if (core.getInput("preview") != "true") {
-			cmd = cmd + " --ephemeral";
-		}
-		if (core.getInput("wait-kube-system") == "true") {
-			cmd = cmd + " --wait_kube_system";
-		}
-		execSync(cmd, { stdio: "inherit" });
+		const idFile = tmpFile("clusterId.txt");
+		const registryFile = tmpFile("registry.txt");
+		await exec.exec(makeClusterCreate(idFile, registryFile));
 
-		let clusterId = fs.readFileSync(idFile, "utf8");
-		core.saveState(common.clusterIdKey, clusterId);
+		const clusterId = fs.readFileSync(idFile, "utf8");
+		core.saveState(ClusterIdKey, clusterId);
 
-		prepareKubeconfig(clusterId);
+		const kubeConfig = await prepareKubeconfig(clusterId);
+		core.exportVariable("KUBECONFIG", kubeConfig);
 
-		await kubectl;
+		core.addPath(await kubectlDir);
 
-		let registry = fs.readFileSync(registryFile, "utf8");
+		const registry = fs.readFileSync(registryFile, "utf8");
 		core.setOutput("registry-address", registry);
 
 		console.log(`Successfully created an nscloud cluster.
@@ -46,24 +40,34 @@ and follow the cluster logs with \`nsc cluster logs ${clusterId} -f\``);
 	}
 }
 
-function prepareKubeconfig(clusterId: string) {
-	let out = common.tmpFile("kubeconfig.txt");
-	execSync(`ns cluster kubeconfig ${clusterId} --output_to=${out}`, {
-		stdio: "inherit",
-	});
+// Returns the path to the generated kubeconfig.
+async function prepareKubeconfig(clusterId: string) {
+	const out = tmpFile("kubeconfig.txt");
 
-	let kubeconfig = fs.readFileSync(out, "utf8");
-	core.exportVariable("KUBECONFIG", kubeconfig);
+	await exec.exec(`ns cluster kubeconfig ${clusterId} --output_to=${out}`);
+
+	return fs.readFileSync(out, "utf8");
 }
 
-async function prepareKubectl() {
-	let out = common.tmpFile("kubectl.txt");
-	execSync(`ns sdk download --sdks=kubectl --output_to=${out} --log_actions=false`, {
-		stdio: "inherit",
-	});
+// Returns the path to the downloaded kubectl binary's directory.
+async function downloadKubectl() {
+	const out = tmpFile("kubectl.txt");
 
-	let kubectlPath = fs.readFileSync(out, "utf8");
-	core.addPath(kubectlPath);
+	await exec.exec(`ns sdk download --sdks=kubectl --output_to=${out} --log_actions=false`);
+
+	return fs.readFileSync(out, "utf8");
+}
+
+function makeClusterCreate(idFile: string, registryFile: string) {
+	// XXX Have a output parameter that emits cluster state as JSON.
+	let cmd = `ns cluster create --output_to=${idFile} --output_registry_to=${registryFile}`;
+	if (core.getInput("preview") != "true") {
+		cmd = cmd + " --ephemeral";
+	}
+	if (core.getInput("wait-kube-system") == "true") {
+		cmd = cmd + " --wait_kube_system";
+	}
+	return cmd;
 }
 
 run();
