@@ -1,11 +1,11 @@
 import * as core from "@actions/core";
 import * as fs from "fs";
 import * as exec from "@actions/exec";
-import { ClusterIdKey, ensureFreshTenantToken, installNs, tmpFile } from "./common";
+import { ClusterIdKey, ensureFreshTenantToken, installNsc, tmpFile } from "./common";
 
 async function run(): Promise<void> {
 	try {
-		await installNs();
+		await installNsc();
 
 		core.setCommandEcho(true);
 
@@ -44,7 +44,7 @@ and follow the cluster logs with \`nsc cluster logs ${clusterId} -f\``);
 async function prepareKubeconfig(clusterId: string) {
 	const out = tmpFile("kubeconfig.txt");
 
-	await exec.exec(`ns cluster kubeconfig ${clusterId} --output_to=${out}`);
+	await exec.exec(`nsc cluster kubeconfig ${clusterId} --output_to=${out}`);
 
 	return fs.readFileSync(out, "utf8");
 }
@@ -53,14 +53,14 @@ async function prepareKubeconfig(clusterId: string) {
 async function downloadKubectl() {
 	const out = tmpFile("kubectl.txt");
 
-	await exec.exec(`ns sdk download --sdks=kubectl --output_to=${out} --log_actions=false`);
+	await exec.exec(`nsc sdk download --sdks=kubectl --output_to=${out} --log_actions=false`);
 
 	return fs.readFileSync(out, "utf8");
 }
 
 function makeClusterCreate(idFile: string, registryFile: string) {
 	// XXX Have a output parameter that emits cluster state as JSON.
-	let cmd = `ns cluster create --output_to=${idFile} --output_registry_to=${registryFile}`;
+	let cmd = `nsc cluster create --output_to=${idFile} --output_registry_to=${registryFile}`;
 	if (core.getInput("preview") != "true") {
 		cmd = cmd + " --ephemeral";
 	}

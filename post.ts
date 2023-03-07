@@ -11,7 +11,7 @@ async function run(): Promise<void> {
 			await ensureFreshTenantToken();
 
 			// TODO replace with suspend & print instructions how to revive it.
-			await exec.exec(`ns cluster destroy ${clusterId} --force`);
+			await exec.exec(`nsc cluster destroy ${clusterId} --force`);
 		}
 	} catch (error) {
 		core.setFailed(error.message);

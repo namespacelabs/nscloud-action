@@ -6748,7 +6748,7 @@ function tmpFile(file) {
     }
     return path.join(tmpDir, file);
 }
-function installNs() {
+function installNsc() {
     return __awaiter(this, void 0, void 0, function* () {
         // Download the specific version of the tool, e.g. as a tarball
         const pathToTarball = yield tc.downloadTool(getDownloadURL(), null, null, {
@@ -6786,11 +6786,11 @@ function getDownloadURL() {
         default:
             throw new Error(`Unsupported operating system: ${RUNNER_OS}`);
     }
-    return `https://get.namespace.so/packages/ns/latest?arch=${arch}&os=${os}`;
+    return `https://get.namespace.so/packages/nsc/latest?arch=${arch}&os=${os}`;
 }
 function ensureFreshTenantToken() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield exec.exec("ns auth exchange-github-token");
+        yield exec.exec("nsc auth exchange-github-token");
     });
 }
 
@@ -6815,7 +6815,7 @@ function run() {
                 // Re-auth in case the previous token has expired.
                 yield ensureFreshTenantToken();
                 // TODO replace with suspend & print instructions how to revive it.
-                yield exec.exec(`ns cluster destroy ${clusterId} --force`);
+                yield exec.exec(`nsc cluster destroy ${clusterId} --force`);
             }
         }
         catch (error) {

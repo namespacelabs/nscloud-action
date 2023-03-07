@@ -16,7 +16,7 @@ export function tmpFile(file: string): string {
 	return path.join(tmpDir, file);
 }
 
-export async function installNs() {
+export async function installNsc() {
 	// Download the specific version of the tool, e.g. as a tarball
 	const pathToTarball = await tc.downloadTool(getDownloadURL(), null, null, {
 		CI: process.env.CI,
@@ -59,9 +59,9 @@ function getDownloadURL(): string {
 			throw new Error(`Unsupported operating system: ${RUNNER_OS}`);
 	}
 
-	return `https://get.namespace.so/packages/ns/latest?arch=${arch}&os=${os}`;
+	return `https://get.namespace.so/packages/nsc/latest?arch=${arch}&os=${os}`;
 }
 
 export async function ensureFreshTenantToken() {
-	await exec.exec("ns auth exchange-github-token");
+	await exec.exec("nsc auth exchange-github-token");
 }
