@@ -1,11 +1,10 @@
 import * as core from "@actions/core";
 import * as fs from "fs";
+import { commandExists } from "command-exists";
 import * as exec from "@actions/exec";
 import { ClusterIdKey, ensureFreshTenantToken, tmpFile } from "./common";
 
 async function run(): Promise<void> {
-	var commandExists = require("command-exists");
-
 	await commandExists("nsc")
 		.then(createCluster)
 		.catch(function () {
