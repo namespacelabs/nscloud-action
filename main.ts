@@ -7,7 +7,7 @@ async function run(): Promise<void> {
 	var commandExists = require("command-exists");
 
 	commandExists("nsc")
-		.then(createCluster)
+		.then(prepareCluster)
 		.catch(function () {
 			core.setFailed(`Namespace Cloud CLI not found.
 
@@ -17,21 +17,19 @@ Please add a step this step to your workflow's job definition:
 		});
 }
 
-async function createCluster(): Promise<void> {
+async function prepareCluster(): Promise<void> {
 	try {
 		// Start downloading kubectl while we prepare the cluster.
 		const kubectlDir = downloadKubectl();
 
 		await ensureFreshTenantToken();
 
-		const idFile = tmpFile("clusterId.txt");
 		const registryFile = tmpFile("registry.txt");
-		await exec.exec(makeClusterCreate(idFile, registryFile));
+		const cluster = await createCluster(registryFile);
 
-		const clusterId = fs.readFileSync(idFile, "utf8");
-		core.saveState(ClusterIdKey, clusterId);
+		core.saveState(ClusterIdKey, cluster.cluster_id);
 
-		const kubeConfig = await prepareKubeconfig(clusterId);
+		const kubeConfig = await prepareKubeconfig(cluster.cluster_id);
 		core.exportVariable("KUBECONFIG", kubeConfig);
 
 		core.addPath(await kubectlDir);
@@ -42,9 +40,9 @@ async function createCluster(): Promise<void> {
 		console.log(`Successfully created an nscloud cluster.
 \`kubectl\` has been installed and preconfigured.
 
-You can find logs and jump into SSH at https://cloud.namespace.so/clusters/${clusterId}
+You can find logs and jump into SSH at ${cluster.app_url}
 Or install \`nsc\` from https://github.com/namespacelabs/foundation/releases/latest
-and follow the cluster logs with \`nsc cluster logs ${clusterId} -f\``);
+and follow the cluster logs with \`nsc cluster logs ${cluster.cluster_id} -f\``);
 	} catch (error) {
 		core.setFailed(error.message);
 	}
@@ -68,16 +66,24 @@ async function downloadKubectl() {
 	return fs.readFileSync(out, "utf8");
 }
 
-function makeClusterCreate(idFile: string, registryFile: string) {
-	// XXX Have a output parameter that emits cluster state as JSON.
-	let cmd = `nsc cluster create --output_to=${idFile} --output_registry_to=${registryFile}`;
+interface Cluster {
+	app_url: string;
+	cluster_id: string;
+}
+
+async function createCluster(registryFile: string): Promise<Cluster> {
+	const out = tmpFile("cluster_metadata.txt");
+
+	let cmd = `nsc cluster create --output_json_to=${out} --output_registry_to=${registryFile}`;
 	if (core.getInput("preview") != "true") {
 		cmd = cmd + " --ephemeral";
 	}
 	if (core.getInput("wait-kube-system") == "true") {
 		cmd = cmd + " --wait_kube_system";
 	}
-	return cmd;
+	await exec.exec(cmd);
+
+	return JSON.parse(fs.readFileSync(out, "utf8"));
 }
 
 run();

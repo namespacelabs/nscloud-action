@@ -4349,7 +4349,7 @@ function run() {
     return main_awaiter(this, void 0, void 0, function* () {
         var commandExists = __nccwpck_require__(569);
         commandExists("nsc")
-            .then(createCluster)
+            .then(prepareCluster)
             .catch(function () {
             core.setFailed(`Namespace Cloud CLI not found.
 
@@ -4359,18 +4359,16 @@ Please add a step this step to your workflow's job definition:
         });
     });
 }
-function createCluster() {
+function prepareCluster() {
     return main_awaiter(this, void 0, void 0, function* () {
         try {
             // Start downloading kubectl while we prepare the cluster.
             const kubectlDir = downloadKubectl();
             yield ensureFreshTenantToken();
-            const idFile = tmpFile("clusterId.txt");
             const registryFile = tmpFile("registry.txt");
-            yield exec.exec(makeClusterCreate(idFile, registryFile));
-            const clusterId = external_fs_.readFileSync(idFile, "utf8");
-            core.saveState(ClusterIdKey, clusterId);
-            const kubeConfig = yield prepareKubeconfig(clusterId);
+            const cluster = yield createCluster(registryFile);
+            core.saveState(ClusterIdKey, cluster.cluster_id);
+            const kubeConfig = yield prepareKubeconfig(cluster.cluster_id);
             core.exportVariable("KUBECONFIG", kubeConfig);
             core.addPath(yield kubectlDir);
             const registry = external_fs_.readFileSync(registryFile, "utf8");
@@ -4378,9 +4376,9 @@ function createCluster() {
             console.log(`Successfully created an nscloud cluster.
 \`kubectl\` has been installed and preconfigured.
 
-You can find logs and jump into SSH at https://cloud.namespace.so/clusters/${clusterId}
+You can find logs and jump into SSH at ${cluster.app_url}
 Or install \`nsc\` from https://github.com/namespacelabs/foundation/releases/latest
-and follow the cluster logs with \`nsc cluster logs ${clusterId} -f\``);
+and follow the cluster logs with \`nsc cluster logs ${cluster.cluster_id} -f\``);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -4403,16 +4401,19 @@ function downloadKubectl() {
         return external_fs_.readFileSync(out, "utf8");
     });
 }
-function makeClusterCreate(idFile, registryFile) {
-    // XXX Have a output parameter that emits cluster state as JSON.
-    let cmd = `nsc cluster create --output_to=${idFile} --output_registry_to=${registryFile}`;
-    if (core.getInput("preview") != "true") {
-        cmd = cmd + " --ephemeral";
-    }
-    if (core.getInput("wait-kube-system") == "true") {
-        cmd = cmd + " --wait_kube_system";
-    }
-    return cmd;
+function createCluster(registryFile) {
+    return main_awaiter(this, void 0, void 0, function* () {
+        const out = tmpFile("cluster_metadata.txt");
+        let cmd = `nsc cluster create --output_json_to=${out} --output_registry_to=${registryFile}`;
+        if (core.getInput("preview") != "true") {
+            cmd = cmd + " --ephemeral";
+        }
+        if (core.getInput("wait-kube-system") == "true") {
+            cmd = cmd + " --wait_kube_system";
+        }
+        yield exec.exec(cmd);
+        return JSON.parse(external_fs_.readFileSync(out, "utf8"));
+    });
 }
 run();
 
