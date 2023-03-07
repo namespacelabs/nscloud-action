@@ -4300,8 +4300,6 @@ __nccwpck_require__.r(__webpack_exports__);
 var core = __nccwpck_require__(186);
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(147);
-// EXTERNAL MODULE: ./node_modules/command-exists/index.js
-var command_exists = __nccwpck_require__(569);
 // EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
 var exec = __nccwpck_require__(514);
 // EXTERNAL MODULE: external "path"
@@ -4347,10 +4345,10 @@ var main_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arg
 
 
 
-
 function run() {
     return main_awaiter(this, void 0, void 0, function* () {
-        yield (0,command_exists.commandExists)("nsc")
+        var commandExists = __nccwpck_require__(569);
+        commandExists("nsc")
             .then(createCluster)
             .catch(function () {
             core.setFailed(`Namespace Cloud CLI not found.

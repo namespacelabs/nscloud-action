@@ -1,11 +1,12 @@
 import * as core from "@actions/core";
 import * as fs from "fs";
-import { commandExists } from "command-exists";
 import * as exec from "@actions/exec";
 import { ClusterIdKey, ensureFreshTenantToken, tmpFile } from "./common";
 
 async function run(): Promise<void> {
-	await commandExists("nsc")
+	var commandExists = require("command-exists");
+
+	commandExists("nsc")
 		.then(createCluster)
 		.catch(function () {
 			core.setFailed(`Namespace Cloud CLI not found.
