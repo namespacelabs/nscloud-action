@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - uses: namespacelabs/nscloud-setup@v0.0.1
       - name: Create Cluster
-        id: nscloud
         uses: ./ # Uses an action in the root directory
       - name: Apply configurations
         run: |
