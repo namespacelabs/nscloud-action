@@ -6748,7 +6748,7 @@ function tmpFile(file) {
     }
     return external_path_.join(tmpDir, file);
 }
-function installNs() {
+function installNsc() {
     return __awaiter(this, void 0, void 0, function* () {
         // Download the specific version of the tool, e.g. as a tarball
         const pathToTarball = yield tool_cache.downloadTool(getDownloadURL(), null, null, {
@@ -6786,11 +6786,11 @@ function getDownloadURL() {
         default:
             throw new Error(`Unsupported operating system: ${RUNNER_OS}`);
     }
-    return `https://get.namespace.so/packages/ns/latest?arch=${arch}&os=${os}`;
+    return `https://get.namespace.so/packages/nsc/latest?arch=${arch}&os=${os}`;
 }
 function ensureFreshTenantToken() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield exec.exec("ns auth exchange-github-token");
+        yield exec.exec("nsc auth exchange-github-token");
     });
 }
 
@@ -6811,7 +6811,7 @@ var main_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arg
 function run() {
     return main_awaiter(this, void 0, void 0, function* () {
         try {
-            yield installNs();
+            yield installNsc();
             core.setCommandEcho(true);
             // Start downloading kubectl while we prepare the cluster.
             const kubectlDir = downloadKubectl();
@@ -6842,7 +6842,7 @@ and follow the cluster logs with \`nsc cluster logs ${clusterId} -f\``);
 function prepareKubeconfig(clusterId) {
     return main_awaiter(this, void 0, void 0, function* () {
         const out = tmpFile("kubeconfig.txt");
-        yield exec.exec(`ns cluster kubeconfig ${clusterId} --output_to=${out}`);
+        yield exec.exec(`nsc cluster kubeconfig ${clusterId} --output_to=${out}`);
         return external_fs_.readFileSync(out, "utf8");
     });
 }
@@ -6850,13 +6850,13 @@ function prepareKubeconfig(clusterId) {
 function downloadKubectl() {
     return main_awaiter(this, void 0, void 0, function* () {
         const out = tmpFile("kubectl.txt");
-        yield exec.exec(`ns sdk download --sdks=kubectl --output_to=${out} --log_actions=false`);
+        yield exec.exec(`nsc sdk download --sdks=kubectl --output_to=${out} --log_actions=false`);
         return external_fs_.readFileSync(out, "utf8");
     });
 }
 function makeClusterCreate(idFile, registryFile) {
     // XXX Have a output parameter that emits cluster state as JSON.
-    let cmd = `ns cluster create --output_to=${idFile} --output_registry_to=${registryFile}`;
+    let cmd = `nsc cluster create --output_to=${idFile} --output_registry_to=${registryFile}`;
     if (core.getInput("preview") != "true") {
         cmd = cmd + " --ephemeral";
     }
