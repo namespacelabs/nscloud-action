@@ -1,5 +1,6 @@
 name: '"Configure Namespace Cloud" Action For GitHub Actions'
 description: "Configure a Namespace Cloud cluster and expose a preconfigured kubectl to access it"
+
 inputs:
   preview:
     description: "If set to 'true', the cluster created will NOT be destroyed at the end."
@@ -9,9 +10,11 @@ inputs:
     description: "If set to 'true', wait for coredns and local-path-provisioner to be ready."
     required: false
     default: "true"
+
 outputs:
   registry-address:
     description: "Endpoint address of the registry set up for the Namespace Cloud cluster."
+
 runs:
   using: node16
   main: dist/main/index.js
