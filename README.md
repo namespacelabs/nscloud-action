@@ -1,7 +1,7 @@
 # Create a Namespace Cloud cluster
 
-This repository hosts a GitHub action that [Namespace Cloud](https://cloud.namespace.so)
-cluster and expose a preconfigured `kubectl` to access it.
+This repository hosts a GitHub action that creates a [Namespace Cloud](https://cloud.namespace.so)
+cluster and exposes a preconfigured `kubectl` to access it.
 
 ## Example
 
