@@ -4178,8 +4178,8 @@ function run() {
             if (clusterId != "" && core.getInput("preview") != "true") {
                 // Re-auth in case the previous token has expired.
                 yield ensureFreshTenantToken();
-                // TODO replace with suspend & print instructions how to revive it.
-                yield exec.exec(`nsc cluster destroy ${clusterId} --force`);
+                // TODO print instructions how to revive it once release is suspend by default
+                yield exec.exec(`nsc cluster release ${clusterId}`);
             }
         }
         catch (error) {

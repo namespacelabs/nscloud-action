@@ -10,8 +10,8 @@ async function run(): Promise<void> {
 			// Re-auth in case the previous token has expired.
 			await ensureFreshTenantToken();
 
-			// TODO replace with suspend & print instructions how to revive it.
-			await exec.exec(`nsc cluster destroy ${clusterId} --force`);
+			// TODO print instructions how to revive it once release is suspend by default
+			await exec.exec(`nsc cluster release ${clusterId}`);
 		}
 	} catch (error) {
 		core.setFailed(error.message);
